@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. ~/.p4_functions
+
+p4_login_check
+
+echo "p4 sync"
+p4 sync
+ret=$?
+
+if [ "0" -eq "$ret" ]; then
+   echo "cscope -R -b &"
+   cscope -R -b &
+fi
+
+exit $ret

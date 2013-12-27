@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [[ "$1" =~ ^[0-9]+$ ]]; then
+   echo "Supply a changelist number"
+   exit 1
+fi
+
+if [ -z "`p4 login -s 2>/dev/null | grep User`" ]; then
+   echo "Perforce login ($LOGNAME)"
+   p4 login
+fi
+
+file_list=`p4 opened | cut -d'#' -f 1`
+
+for file in $file_list; do
+   p4 diff $file@=$1
+done
+
+echo
+
+other_cl_files=`p4 opened | grep -v $1 | cut -d'#' -f 1`
+
+if [ -n "$other_cl_files" ]; then
+   echo "Files checked out in changelists other than $1:"
+   echo $other_cl_files
+fi

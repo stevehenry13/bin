@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+   echo "Supply a changelist number"
+   exit 1
+fi
+
+. ~/.p4_functions
+
+p4_login_check
+
+if [ "$1" -lt 1000 ]; then
+   i=1
+   while read line; do
+      if [ "$i" -eq "$1" ]; then
+         echo $line
+         changelist=`echo $line | cut -d' ' -f 2`
+      fi
+      i=$(($i+1))
+   done <<< "`p4 changes -s shelved -u $LOGNAME`"
+else
+   changelist=$1
+fi
+
+p4 shelve -d -c $changelist && p4 change -d $changelist
