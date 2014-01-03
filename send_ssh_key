@@ -1,0 +1,9 @@
+#!/bin/bash
+
+servers=$@
+SSHPASS=
+
+for serv in $servers
+  sshpass -e ssh 'mkdir -p .ssh && cat >> .ssh/authorized_keys' < .ssh/id_rsa.pub
+  sshpass -e ssh 'chmod 700 .ssh && chmod 640 .ssh/authorized_keys'
+done

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#if [ -z "$1" ]; then
+#   arg=default
+#else
+#   arg=$1
+#fi
+
+#. ~/.p4_functions
+
+#p4_login_check
+
+vim_tab_max=`vim --cmd 'set tabpagemax' --cmd quit 2>/dev/null | sed '$ s/.*=\(.*\)/\1/'`
+
+if [ -e "$arg" ]; then
+   vim -p -c "silent tabdo call SDiff()" -c "tabm 0" $arg
+elif [[ "$arg" =~ ^[0-9]+$ || "default" == "$arg" || -z "$arg" ]]; then
+   num_files=0
+   diff_files=
+
+   # Git
+   vim_diff_function="SDiff($arg)"
+   files=$(git diff --name-only 2>/dev/null)
+
+   # SVN
+   if [ -z "$files" ]; then
+      vim_diff_function="SDiff($arg)"
+      files=$(svn status 2>/dev/null | awk '{if ($1 ~ "^[ACMR]") print $2}')
+   fi
+
+   # Perforce
+   if [ "shelf" == "$2" ]; then
+      vim_diff_function="SDiff(\"@=$arg\")"
+      get_p4_files $arg "-Rs -Ro"
+   fi
+ 
+   if [ -z "$files" ]; then
+      vim_diff_function="SDiff($arg, '@=')"
+      get_p4_files $arg "-Rs"
+   fi
+
+   if [ -z "$files" ]; then
+      vim_diff_function="SDiff()"
+      get_p4_files $arg "-Ro"
+   fi
+
+   if [ -z "$files" ]; then
+      vim_diff_function="SDiff($arg, '@')"
+      get_p4_files $arg
+   fi
+
+   if [ -n "$files" ]; then
+      count=0
+      for file in $files
+      do
+         count=$(( $count + 1 ))
+
+         if [ -f "$file" ]; then
+            num_files=$(($num_files + 1))
+            diff_files="$diff_files $file"
+         fi
+
+         if [ "$vim_tab_max" -eq "$num_files" -o "$count" -eq "$(echo \"$files\" | wc -w)" ]; then
+            vim -p -c "silent tabdo call $vim_diff_function" -c "tabm 0" $diff_files
+            num_files=0
+            diff_files=
+         fi
+      done
+   else
+      echo "Cannot find files"
+   fi
+
+else
+   echo "No file or changelist $arg"
+fi
