@@ -22,6 +22,11 @@ elif [[ "$arg" =~ ^[0-9]+$ || "default" == "$arg" || -z "$arg" ]]; then
    vim_diff_function="SDiff($arg)"
    files=$(git diff --name-only 2>/dev/null)
 
+   if [ -z "$files" ]; then
+     vim_diff_function="SDiff($arg)"
+     files=$(git diff --cached --name-only 2>/dev/null)
+   fi
+
    # SVN
    if [ -z "$files" ]; then
       vim_diff_function="SDiff($arg)"
