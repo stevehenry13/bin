@@ -1,0 +1,26 @@
+#!/bin/bash
+
+vim_tab_max=`vim --cmd 'set tabpagemax' --cmd quit 2>/dev/null | sed '$ s/.*=\(.*\)/\1/'`
+
+files=`ls $@`
+
+if [ -n "$files" ]; then
+   count=0
+   for file in $files
+   do
+      count=$(( $count + 1 ))
+
+      if [ -f "$file" ]; then
+         num_files=$(($num_files + 1))
+         dir_files="$dir_files $file"
+      fi
+
+      if [ "$vim_tab_max" -eq "$num_files" -o "$count" -eq "$(echo \"$files\" | wc -w)" ]; then
+         vim -p -c "tabm 0" $dir_files
+         num_files=0
+         dir_files=
+      fi
+   done
+else
+   echo "Cannot find files"
+fi

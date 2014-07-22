@@ -1,0 +1,17 @@
+#!/bin/bash
+
+show_panes()
+{
+  env=$1
+  envs=$2
+  pane=$3
+  host=$4
+
+  tmux select-pane -t $pane
+
+  if [[ $envs == *$env* ]]; then
+    tmux send-keys "ssh $host"
+  else
+    tmux send-keys "exit"
+  fi
+}
