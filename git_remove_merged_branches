@@ -1,0 +1,11 @@
+#!/bin/bash
+
+git fetch -p
+
+for type in 'feature' 'bugfix'; do
+  # Remove remote branches
+  git branch -r --merged develop | grep origin/$type 2>/dev/null | sed 's/origin\///' | xargs -I% git push origin :%
+
+  # Remove local branches
+  git branch --merged develop | grep $type 2>/dev/null | xargs -I% git push origin :%
+done
