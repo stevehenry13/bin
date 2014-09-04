@@ -1,6 +1,7 @@
 #!/bin/bash
 
-git fetch -p
+git remote prune --dry-run origin | tail -n +3 | sed 's/.*origin\///' | xargs -I% git branch -d %
+git remote prune origin
 
 for type in 'feature' 'bugfix'; do
   # Remove remote branches
