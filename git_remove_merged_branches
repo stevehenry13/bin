@@ -1,11 +1,21 @@
 #!/bin/bash
 
-git remote prune --dry-run origin | tail -n +3 | sed 's/.*origin\///' | xargs -I% git branch -d %
-git remote prune origin
-
 for type in 'feature' 'bugfix'; do
   # Remove remote branches
-  git branch -r --merged develop | grep origin/$type 2>/dev/null | sed 's/origin\///' | xargs -I% sh -c 'git push origin :%; git branch -d %'
+  git branch -r --merged develop | grep origin/$type 2>/dev/null | sed 's/origin\///' | xargs -I% git push origin :%
+done
+
+for branch in $(git for-each-ref --format='%(refname:short):%(upstream:short)' refs/heads); do
+  local=${branch%:*}
+  remote=${branch#*:}
+
+  if [ -n "$remote" ]; then
+    git show-ref -q --verify refs/remotes/$remote
+
+    if [ $? -ne 0 ]; then
+      git branch -d $local
+    fi
+  fi
 done
 
 exit 0
