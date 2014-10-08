@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+~/bin/git_hooks/ctags >/dev/null 2>&1 &
 
 git fetch -p
 
