@@ -3,12 +3,24 @@
 ~/bin/git_hooks/ctags >/dev/null 2>&1 &
 
 if [ $1 != 0000000000000000000000000000000000000000 ]; then
-  if command -v bundle >/dev/null
+  if command -v bundle >/dev/null; then
     if [ -d db/migrate ]; then
       bundle exec rake db:migrate
-    elif [ $3 = 1 -a -f Gemfile ] && command -v bundle >/dev/null && git diff --name-only $1 $2 | egrep -q '^Gemfile|\.gemspec$'; then
+    elif [ $3 = 1 -a -f Gemfile ] && git diff --name-only $1 $2 | egrep -q '^Gemfile|\.gemspec$'; then
       (unset GIT_DIR; exec bundle) | grep -v '^Using ' | grep -v ' is complete'
       true
+    fi
+  fi
+
+  if command -v bower >/dev/null; then
+    if [ $3 = 1 -a -f bower.json ] && git diff --name-only $1 $2 | egrep -q '^bower.json$'; then
+      (unset GIT_DIR; exec bower install)
+    fi
+  fi
+
+  if command -v npm >/dev/null && [ -f package.json ]; then
+    if [ $3 = 1 -a -f package.json ] && git diff --name-only $1 $2 | egrep -q '^package.json$'; then
+      (unset GIT_DIR; exec npm install)
     fi
   fi
 fi
