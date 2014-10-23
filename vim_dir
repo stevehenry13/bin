@@ -2,20 +2,23 @@
 
 vim_tab_max=`vim --cmd 'set tabpagemax' --cmd quit 2>/dev/null | sed '$ s/.*=\(.*\)/\1/'`
 
-files=`ls $@`
+dir=$1
+files=`ls $1`
 
 if [ -n "$files" ]; then
    count=0
-   for file in $files
-   do
+   num_files=0
+   total=$(echo \"$files\" | wc -w)
+
+   for file in $files; do
       count=$(( $count + 1 ))
 
-      if [ -f "$file" ]; then
+      if [ -f "$dir/$file" ]; then
          num_files=$(($num_files + 1))
-         dir_files="$dir_files $file"
+         dir_files="$dir_files $dir/$file"
       fi
 
-      if [ "$vim_tab_max" -eq "$num_files" -o "$count" -eq "$(echo \"$files\" | wc -w)" ]; then
+      if [ "$vim_tab_max" -eq "$num_files" -o "$count" -eq "$total" ]; then
          vim -p -c "tabm 0" $dir_files
          num_files=0
          dir_files=
