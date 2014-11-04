@@ -25,4 +25,10 @@ if [ $1 != 0000000000000000000000000000000000000000 ]; then
       (unset GIT_DIR; exec npm install)
     fi
   fi
+
+  if command -v pod >/dev/null && [ -f Podfile ]; then
+    if [ $3 = 1 -a -f Podfile ] && git diff --name-only $1 $2 | egrep -q '^Podfile$'; then
+      (unset GIT_DIR; exec pod install)
+    fi
+  fi
 fi
