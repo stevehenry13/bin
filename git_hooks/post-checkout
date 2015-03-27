@@ -7,7 +7,8 @@
 if [ $1 != 0000000000000000000000000000000000000000 ]; then
   if command -v bundle >/dev/null; then
     if [ -d db/migrate ]; then
-      bundle exec rake db:migrate
+      echo Need to run bundle exec rake db:migrate
+      #bundle exec rake db:migrate
     elif [ $3 = 1 -a -f Gemfile ] && git diff --name-only $1 $2 | egrep -q '^Gemfile|\.gemspec$'; then
       (unset GIT_DIR; exec bundle) | grep -v '^Using ' | grep -v ' is complete'
       true
@@ -16,19 +17,22 @@ if [ $1 != 0000000000000000000000000000000000000000 ]; then
 
   if command -v bower >/dev/null; then
     if [ $3 = 1 -a -f bower.json ] && git diff --name-only $1 $2 | egrep -q '^bower.json$'; then
-      (unset GIT_DIR; exec bower install)
+      echo Need to run bower install
+      #(unset GIT_DIR; exec bower install)
     fi
   fi
 
   if command -v npm >/dev/null && [ -f package.json ]; then
     if [ $3 = 1 -a -f package.json ] && git diff --name-only $1 $2 | egrep -q '^package.json$'; then
-      (unset GIT_DIR; exec npm install)
+      echo Need to run npm install
+      #(unset GIT_DIR; exec npm install)
     fi
   fi
 
   if command -v pod >/dev/null && [ -f Podfile ]; then
     if [ $3 = 1 -a -f Podfile ] && git diff --name-only $1 $2 | egrep -q '^Podfile$'; then
-      (unset GIT_DIR; exec pod install)
+      echo Need to run pod install
+      #(unset GIT_DIR; exec pod install)
     fi
   fi
 fi
