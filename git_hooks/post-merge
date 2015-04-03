@@ -1,7 +1,5 @@
 #!/bin/sh
 
-~/bin/git_hooks/ctags >/dev/null 2>&1 &
-
 ~/bin/git_hooks/clean_up_branches
 
 exit 0
