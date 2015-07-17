@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bundle exec script/merge_request.rb --push
+bundle exec script/merge_request.rb --push $@
