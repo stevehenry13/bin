@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker exec -it $( docker ps | awk "/_$1/ { print \$1 }" ) bash
