@@ -1,9 +1,11 @@
 #!/bin/bash
 
-pod_name=$(~/bin/get_pod_name $1)
+pod_name=$(~/bin/ksearch pod $1)
 
 shift
 
+program=${@:-bash}
+
 container_name=$(kubectl describe pod $pod_name | grep -A1 Containers | tail -1 | sed -e 's/://')
 
-kubectl exec $pod_name -c $container_name -it -- $@
+kubectl exec $pod_name -c $container_name -it -- $program

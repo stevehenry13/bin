@@ -1,0 +1,7 @@
+#!/bin/bash
+
+controller_name=$(~/bin/ksearch rc $1)
+
+shift
+
+kubectl get rc $controller_name -o yaml | kubectl delete -f -

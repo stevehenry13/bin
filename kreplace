@@ -1,0 +1,7 @@
+#!/bin/bash
+
+controller_name=$(~/bin/ksearch rc $1)
+
+shift
+
+kubectl get pod $controller_name -o yaml | kubectl replace -f -

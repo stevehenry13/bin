@@ -1,5 +1,5 @@
 #!/bin/bash
 
-pod_name=$(~/bin/get_pod_name $1)
+pod_name=$(~/bin/ksearch pod $1)
 
 kubectl describe pod $pod_name
