@@ -1,0 +1,14 @@
+#!/bin/sh
+
+storyID=$(git symbolic-ref HEAD | sed 's/.*\/\(.*[0-9]\+\)[-_].*/\1/')
+
+if [[ $storyID != *"refs"* ]]; then
+  if [ -z "$(grep "JIRA:$storyID" $1 2>/dev/null)" ]; then
+    grep -o '^[^#]*' $1 >> /tmp/out
+    echo "" >> /tmp/out
+    echo "JIRA:$storyID" >> /tmp/out
+    echo "" >> /tmp/out
+    grep -o '^[#].*' $1 >> /tmp/out
+    mv /tmp/out $1
+  fi
+fi
